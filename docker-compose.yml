@@ -1,0 +1,33 @@
+version: '3.8'
+
+services:
+  # Base de Datos Relacional (Transacciones, Usuarios, Reservas)
+  postgres-db:
+    image: postgres:15-alpine
+    container_name: vivienda_postgres
+    restart: always
+    environment:
+      POSTGRES_USER: postgres_admin
+      POSTGRES_PASSWORD: admin_password_123
+      POSTGRES_DB: vivienda_universitaria_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+  # Base de Datos NoSQL (Chats, Notificaciones, Logs de Auditoría)
+  mongo-db:
+    image: mongo:6.0
+    container_name: vivienda_mongo
+    restart: always
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: mongo_admin
+      MONGO_INITDB_ROOT_PASSWORD: admin_password_123
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodata:/data/db
+
+volumes:
+  pgdata:
+  mongodata:
