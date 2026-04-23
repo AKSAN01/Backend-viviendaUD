@@ -49,9 +49,6 @@ Para mantener este README limpio, toda la documentación detallada de configurac
 
 Proyecto desarrollado colaborativamente por:
 * Santiago Vargas Mayorga
-* Tomas
-* Jose
-* Brayan
-* Kathe
+* Jose Cucanchon 
 
 Universidad Distrital Francisco José de Caldas.
