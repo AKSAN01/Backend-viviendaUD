@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.stream.Collectors;
 import java.util.List;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -74,4 +75,29 @@ public class ReservaService {
                 .map(this::mapToResponse)
                 .collect(Collectors.toList());
     }
+
+
+    // Método para que el arrendador acepte o rechace la reserva
+    public ReservaResponse cambiarEstadoReserva(UUID reservaId, EstadoReserva nuevoEstado) {
+        // 1. Saber quién es el usuario que está haciendo la petición
+        UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String emailUsuarioActual = userDetails.getUsername();
+
+        // 2. Buscar la reserva en la base de datos
+        Reserva reserva = reservaRepository.findById(reservaId)
+                .orElseThrow(() -> new RuntimeException("Reserva no encontrada"));
+
+        // 3. SEGURIDAD: Verificar que el usuario actual sea el dueño de la vivienda
+        String emailDuenioVivienda = reserva.getVivienda().getArrendador().getEmail();
+        if (!emailDuenioVivienda.equals(emailUsuarioActual)) {
+            throw new RuntimeException("Acceso denegado: No eres el propietario de esta vivienda");
+        }
+
+        // 4. Actualizar el estado y guardar
+        reserva.setEstado(nuevoEstado);
+        Reserva reservaActualizada = reservaRepository.save(reserva);
+
+        return mapToResponse(reservaActualizada);
+    }
+
 }
