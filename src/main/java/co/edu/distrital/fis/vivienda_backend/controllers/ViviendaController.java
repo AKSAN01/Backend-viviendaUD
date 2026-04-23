@@ -8,6 +8,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @RestController
@@ -26,7 +27,9 @@ public class ViviendaController {
 
     // Endpoint para ver todas las viviendas (GET)
     @GetMapping
-    public ResponseEntity<List<ViviendaResponse>> obtenerTodas() {
-        return ResponseEntity.ok(viviendaService.obtenerTodas());
+    public ResponseEntity<List<ViviendaResponse>> obtenerViviendas(
+            @RequestParam(required = false) BigDecimal precioMaximo
+    ) {
+        return ResponseEntity.ok(viviendaService.obtenerViviendas(precioMaximo));
     }
 }

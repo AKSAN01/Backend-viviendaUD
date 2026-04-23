@@ -11,6 +11,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -50,10 +51,17 @@ public class ViviendaService {
     }
 
     // Método para listar todas las viviendas disponibles
-    public List<ViviendaResponse> obtenerTodas() {
-        List<Vivienda> viviendas = viviendaRepository.findAll();
+    public List<ViviendaResponse> obtenerViviendas(BigDecimal precioMaximo) {
+        List<Vivienda> viviendas;
+
+        // Si nos enviaron un precio máximo, filtramos. Si no, traemos todas.
+        if (precioMaximo != null) {
+            viviendas = viviendaRepository.findByPrecioMensualLessThanEqual(precioMaximo);
+        } else {
+            viviendas = viviendaRepository.findAll();
+        }
         
-        // Convertimos la lista de Entidades a una lista de DTOs usando Streams de Java
+        // Convertimos a DTOs
         return viviendas.stream()
                 .map(this::mapToResponse)
                 .collect(Collectors.toList());
