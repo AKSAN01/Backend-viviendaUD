@@ -15,4 +15,6 @@ public interface ReservaRepository extends JpaRepository<Reserva, UUID> {
 
     // Para que un arrendador vea las reservas de una propiedad específica
     List<Reserva> findByViviendaId(UUID viviendaId);
+
+    List<Reserva> findByEstudianteEmail(String email);
 }
