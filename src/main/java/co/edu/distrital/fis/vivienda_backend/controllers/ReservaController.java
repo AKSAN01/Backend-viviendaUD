@@ -3,6 +3,7 @@ package co.edu.distrital.fis.vivienda_backend.controllers;
 import co.edu.distrital.fis.vivienda_backend.dto.reserva.ReservaRequest;
 import co.edu.distrital.fis.vivienda_backend.dto.reserva.ReservaResponse;
 import co.edu.distrital.fis.vivienda_backend.entities.Reserva.EstadoReserva;
+import co.edu.distrital.fis.vivienda_backend.repositories.RegistroActividadRepository;
 import co.edu.distrital.fis.vivienda_backend.services.ReservaService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -18,6 +19,7 @@ import java.util.UUID;
 public class ReservaController {
 
     private final ReservaService reservaService;
+    private final RegistroActividadRepository registroActividadRepository;
 
     @PostMapping
     public ResponseEntity<ReservaResponse> crearReserva(@RequestBody ReservaRequest request) {
@@ -38,5 +40,12 @@ public class ReservaController {
     ) {
         return ResponseEntity.ok(reservaService.cambiarEstadoReserva(id, estado));
     }
+
+        @GetMapping("/logs")
+    public ResponseEntity<?> verLogs() {
+        return ResponseEntity.ok(registroActividadRepository.findAll());
+    }
+
+    
 
 }

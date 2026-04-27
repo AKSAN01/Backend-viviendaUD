@@ -1,11 +1,13 @@
 package co.edu.distrital.fis.vivienda_backend.services;
 
+import co.edu.distrital.fis.vivienda_backend.documents.RegistroActividad;
 import co.edu.distrital.fis.vivienda_backend.dto.reserva.ReservaRequest;
 import co.edu.distrital.fis.vivienda_backend.dto.reserva.ReservaResponse;
 import co.edu.distrital.fis.vivienda_backend.entities.Reserva;
 import co.edu.distrital.fis.vivienda_backend.entities.Reserva.EstadoReserva;
 import co.edu.distrital.fis.vivienda_backend.entities.Usuario;
 import co.edu.distrital.fis.vivienda_backend.entities.Vivienda;
+import co.edu.distrital.fis.vivienda_backend.repositories.RegistroActividadRepository;
 import co.edu.distrital.fis.vivienda_backend.repositories.ReservaRepository;
 import co.edu.distrital.fis.vivienda_backend.repositories.UsuarioRepository;
 import co.edu.distrital.fis.vivienda_backend.repositories.ViviendaRepository;
@@ -26,8 +28,9 @@ public class ReservaService {
     private final ReservaRepository reservaRepository;
     private final ViviendaRepository viviendaRepository;
     private final UsuarioRepository usuarioRepository;
+    private final RegistroActividadRepository registroActividadRepository;
 
-    public ReservaResponse crearReserva(ReservaRequest request) {
+public ReservaResponse crearReserva(ReservaRequest request) {
         UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         Usuario estudiante = usuarioRepository.findByEmail(userDetails.getUsername())
                 .orElseThrow(() -> new RuntimeException("Estudiante no encontrado"));
@@ -35,6 +38,7 @@ public class ReservaService {
         Vivienda vivienda = viviendaRepository.findById(request.getViviendaId())
                 .orElseThrow(() -> new RuntimeException("Vivienda no encontrada"));
 
+        // 1. Guardamos la transacción en PostgreSQL
         Reserva reserva = Reserva.builder()
                 .vivienda(vivienda)
                 .estudiante(estudiante)
@@ -46,6 +50,18 @@ public class ReservaService {
 
         Reserva reservaGuardada = reservaRepository.save(reserva);
 
+        // 2. Guardamos el Log de Auditoría en MongoDB
+        RegistroActividad log = RegistroActividad.builder()
+                .usuarioEmail(estudiante.getEmail())
+                .accion("CREACION_RESERVA")
+                .entidad("Reserva")
+                .descripcion("El estudiante solicitó la vivienda: " + vivienda.getTitulo())
+                .fecha(LocalDateTime.now())
+                .build();
+        
+        registroActividadRepository.save(log);
+
+        // 3. Retornamos la respuesta al cliente
         return mapToResponse(reservaGuardada);
     }
 
