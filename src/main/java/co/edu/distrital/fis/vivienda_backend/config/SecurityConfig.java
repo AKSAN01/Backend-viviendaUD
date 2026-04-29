@@ -35,6 +35,7 @@ public class SecurityConfig {
             // 3. Configuramos las rutas públicas y privadas
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers("/api/v1/auth/**").permitAll() // Login y registro son públicos
+                .requestMatchers(org.springframework.http.HttpMethod.GET, "/api/v1/viviendas").permitAll()
                 .anyRequest().authenticated() // Todo lo demás requiere token
             )
             
