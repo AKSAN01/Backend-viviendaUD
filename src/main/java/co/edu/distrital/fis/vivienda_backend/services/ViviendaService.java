@@ -75,6 +75,8 @@ public class ViviendaService {
                 .descripcion(vivienda.getDescripcion())
                 .precioMensual(vivienda.getPrecioMensual())
                 .tipoAlojamiento(vivienda.getTipoAlojamiento())
+                .latitud(vivienda.getLatitud())
+                .longitud(vivienda.getLongitud())
                 .arrendadorEmail(vivienda.getArrendador().getEmail())
                 .build();
     }

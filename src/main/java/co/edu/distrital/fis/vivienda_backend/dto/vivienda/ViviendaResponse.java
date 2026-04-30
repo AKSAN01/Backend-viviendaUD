@@ -19,6 +19,8 @@ public class ViviendaResponse {
     private String descripcion;
     private BigDecimal precioMensual;
     private TipoAlojamiento tipoAlojamiento;
+    private Double latitud;
+    private Double longitud;
     // Devolvemos el correo o ID del arrendador para saber de quién es
     private String arrendadorEmail; 
 }
