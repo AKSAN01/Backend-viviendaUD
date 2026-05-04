@@ -26,12 +26,14 @@ public class ReservaController {
         return new ResponseEntity<>(reservaService.crearReserva(request), HttpStatus.CREATED);
     }
 
-    @GetMapping("/mis-reservas")
+    @GetMapping
     public ResponseEntity<List<ReservaResponse>> obtenerMisReservas() {
-        return ResponseEntity.ok(reservaService.obtenerMisReservas());
+        // Como tu ReservaService ya extrae el token usando SecurityContextHolder,
+        // solo necesitamos llamar al método y devolver su resultado.
+        List<ReservaResponse> misReservas = reservaService.obtenerMisReservas();
+        
+        return ResponseEntity.ok(misReservas);
     }
-
-    // (Asegúrate de importar co.edu.distrital.fis.vivienda_backend.entities.Reserva.EstadoReserva)
 
     @PatchMapping("/{id}/estado")
     public ResponseEntity<ReservaResponse> cambiarEstadoReserva(
@@ -41,11 +43,9 @@ public class ReservaController {
         return ResponseEntity.ok(reservaService.cambiarEstadoReserva(id, estado));
     }
 
-        @GetMapping("/logs")
+    @GetMapping("/logs")
     public ResponseEntity<?> verLogs() {
         return ResponseEntity.ok(registroActividadRepository.findAll());
     }
-
-    
 
 }
